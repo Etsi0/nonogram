@@ -57,13 +57,15 @@ export function Preload(
  * addEventListener('resize', ResizeCanvas);
  */
 export function ResizeCanvas(): void {
-	canvas.style.width = window.innerWidth + 'px';
-	canvas.style.height = window.innerHeight + 'px';
+	const dpr = window.devicePixelRatio;
+	const wW = window.innerWidth;
+	const wH = window.innerHeight;
 
-	const DRP = window.devicePixelRatio || 1;
-	canvas.width = window.innerWidth * DRP;
-	canvas.height = window.innerHeight * DRP;
-	ctx.scale(DRP, DRP);
+	canvas.style.width = wW + 'px';
+	canvas.style.height = wH + 'px';
+
+	canvas.width = wW * dpr;
+	canvas.height = wH * dpr;
 
 	executeActionOnCells(['gotResized']);
 }

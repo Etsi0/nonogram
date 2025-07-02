@@ -44,12 +44,13 @@ export function Preload(basePath, images, callback) {
  * addEventListener('resize', ResizeCanvas);
  */
 export function ResizeCanvas() {
-    canvas.style.width = window.innerWidth + 'px';
-    canvas.style.height = window.innerHeight + 'px';
-    const DRP = window.devicePixelRatio || 1;
-    canvas.width = window.innerWidth * DRP;
-    canvas.height = window.innerHeight * DRP;
-    ctx.scale(DRP, DRP);
+    const dpr = window.devicePixelRatio;
+    const wW = window.innerWidth;
+    const wH = window.innerHeight;
+    canvas.style.width = wW + 'px';
+    canvas.style.height = wH + 'px';
+    canvas.width = wW * dpr;
+    canvas.height = wH * dpr;
     executeActionOnCells(['gotResized']);
 }
 export function GetWorkareaDimensions() {
