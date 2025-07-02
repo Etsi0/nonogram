@@ -26,7 +26,7 @@ document.addEventListener('mousedown', (event) => {
 	mouse.click = event.buttons;
 });
 
-canvas.addEventListener('touchstart', (event) => {
+document.addEventListener('touchstart', (event) => {
 	event.preventDefault();
 
 	if (event.touches.length > 0) {
@@ -38,7 +38,7 @@ canvas.addEventListener('touchstart', (event) => {
 	}
 }, { passive: false });
 
-canvas.addEventListener('touchmove', (event) => {
+document.addEventListener('touchmove', (event) => {
 	event.preventDefault();
 
 	if (event.touches.length > 0) {
@@ -49,7 +49,7 @@ canvas.addEventListener('touchmove', (event) => {
 	}
 }, { passive: false });
 
-const ENABLE_DEVTOOLS = false; // Disable devtools just because
+const ENABLE_DEVTOOLS = false;
 document.addEventListener('contextmenu', (event) => {
 	if (!ENABLE_DEVTOOLS) {
 		event.preventDefault();

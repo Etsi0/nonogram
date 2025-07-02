@@ -6,18 +6,41 @@ export const mouse = {
     x: 0,
     y: 0,
 };
-// Update mouse position whenever it moves
-document.addEventListener('mousemove', (event) => {
+function getCanvasCoordinates(clientX, clientY) {
     const rect = canvas.getBoundingClientRect();
-    mouse.x = event.clientX - rect.left;
-    mouse.y = event.clientY - rect.top;
+    return {
+        x: clientX - rect.left,
+        y: clientY - rect.top
+    };
+}
+document.addEventListener('mousemove', (event) => {
+    const coords = getCanvasCoordinates(event.clientX, event.clientY);
+    mouse.x = coords.x;
+    mouse.y = coords.y;
 });
-// Register player clicks
 document.addEventListener('mousedown', (event) => {
     mouse.click = event.buttons;
 });
-// Disables so the right click menu doesn't popup
-const ENABLE_DEVTOOLS = true;
+document.addEventListener('touchstart', (event) => {
+    event.preventDefault();
+    if (event.touches.length > 0) {
+        const touch = event.touches[0];
+        const coords = getCanvasCoordinates(touch.clientX, touch.clientY);
+        mouse.x = coords.x;
+        mouse.y = coords.y;
+        mouse.click = 1;
+    }
+}, { passive: false });
+document.addEventListener('touchmove', (event) => {
+    event.preventDefault();
+    if (event.touches.length > 0) {
+        const touch = event.touches[0];
+        const coords = getCanvasCoordinates(touch.clientX, touch.clientY);
+        mouse.x = coords.x;
+        mouse.y = coords.y;
+    }
+}, { passive: false });
+const ENABLE_DEVTOOLS = false;
 document.addEventListener('contextmenu', (event) => {
     if (!ENABLE_DEVTOOLS) {
         event.preventDefault();
