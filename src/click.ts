@@ -26,7 +26,7 @@ document.addEventListener('mousedown', (event) => {
 	mouse.click = event.buttons;
 });
 
-document.addEventListener('touchstart', (event) => {
+canvas.addEventListener('touchstart', (event) => {
 	event.preventDefault();
 
 	if (event.touches.length > 0) {
@@ -38,7 +38,7 @@ document.addEventListener('touchstart', (event) => {
 	}
 }, { passive: false });
 
-document.addEventListener('touchmove', (event) => {
+canvas.addEventListener('touchmove', (event) => {
 	event.preventDefault();
 
 	if (event.touches.length > 0) {
