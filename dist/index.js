@@ -26,7 +26,7 @@ export function GameLoop() {
                 col.forEach((text, j) => {
                     const txt = new Text(text.toString(), fontSize);
                     txt.x = workarea.x + gridCellSize / 2 + PercentageToPixels(16) + (gridCellSize + PercentageToPixels(board.lineThickness)) * i;
-                    txt.y = workarea.y + PercentageToPixels(16) - gridCellSize / 2 - (txt.height + fontSize / 2) * j;
+                    txt.y = workarea.y + PercentageToPixels(16) - gridCellSize / 2 - (txt.height + fontSize / 2) * (col.length - j);
                     txt.render();
                 });
             });
@@ -34,7 +34,7 @@ export function GameLoop() {
                 row.forEach((text, j) => {
                     const txt = new Text(text.toString(), fontSize);
                     const centerTextOnLine = txt.height + (gridCellSize - txt.height) / 2;
-                    txt.x = workarea.x + PercentageToPixels(16) - gridCellSize / 2 - fontSize / 2 - (fontSize / 2 * text.toString().length + fontSize / 2) * j;
+                    txt.x = workarea.x + PercentageToPixels(16) - gridCellSize / 2 - fontSize / 2 - (fontSize / 2 * text.toString().length + fontSize / 2) * (row.length - j);
                     txt.y = workarea.y + centerTextOnLine + PercentageToPixels(16) + (gridCellSize + PercentageToPixels(board.lineThickness)) * i;
                     txt.render();
                 });
@@ -130,7 +130,7 @@ function buildGame(dummy) {
             colText[col][colText[col].length - 1]++;
             rowText[row][rowText[row].length - 1]++;
         }
-        return new cell(col, row, randomInt ? 'Pen' : 'Eraser', true);
+        return new cell(col, row, randomInt ? 'Pen' : 'Eraser');
     });
     colText = colText.map((array) => filter(array));
     rowText = rowText.map((array) => filter(array));

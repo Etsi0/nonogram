@@ -3,11 +3,11 @@ import { GetBoardDimensions, getColor, isInside, PercentageToPixels } from "./ut
 import { board, variables } from "./setting.js";
 import { mouse } from "./click.js";
 export class cell {
-    constructor(col, row, state = 'Pen', hidden = false) {
+    constructor(col, row, state = 'Pen') {
         this.col = col;
         this.row = row;
         this.state = state;
-        this.hidden = hidden;
+        this.hidden = false;
         this.gotResized();
     }
     draw() {

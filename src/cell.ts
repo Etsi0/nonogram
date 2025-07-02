@@ -14,11 +14,11 @@ export class cell {
 	private hidden: boolean;
 	private state: TTool;
 
-	constructor(col: number, row: number, state: TTool = 'Pen', hidden: boolean = false) {
+	constructor(col: number, row: number, state: TTool = 'Pen') {
 		this.col = col;
 		this.row = row;
 		this.state = state;
-		this.hidden = hidden;
+		this.hidden = false;
 		this.gotResized();
 	}
 
