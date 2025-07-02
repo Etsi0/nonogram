@@ -8,19 +8,23 @@ export const mouse = {
 	y: 0,
 };
 
-// Update mouse position whenever it moves
 document.addEventListener('mousemove', (event) => {
 	const rect = canvas.getBoundingClientRect();
 	mouse.x = event.clientX - rect.left;
 	mouse.y = event.clientY - rect.top;
 });
 
-// Register player clicks
+document.addEventListener('touchstart', (event) => {
+	const rect = canvas.getBoundingClientRect();
+	mouse.x = event[0].pageX - rect.left;
+	mouse.y = event[0].pageY - rect.top;
+	mouse.click = 1;
+});
+
 document.addEventListener('mousedown', (event) => {
 	mouse.click = event.buttons;
 });
 
-// Disables so the right click menu doesn't popup
 const ENABLE_DEVTOOLS = true;
 document.addEventListener('contextmenu', (event) => {
 	if (!ENABLE_DEVTOOLS) {
