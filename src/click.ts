@@ -10,9 +10,10 @@ export const mouse = {
 
 function getCanvasCoordinates(clientX: number, clientY: number) {
 	const rect = canvas.getBoundingClientRect();
+	const dpr = window.devicePixelRatio;
 	return {
-		x: clientX - rect.left,
-		y: clientY - rect.top
+		x: (clientX - rect.left) * dpr,
+		y: (clientY - rect.top) * dpr
 	};
 }
 
