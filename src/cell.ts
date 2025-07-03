@@ -18,7 +18,7 @@ export class cell {
 		this.col = col;
 		this.row = row;
 		this.state = state;
-		this.hidden = false;
+		this.hidden = true;
 		this.gotResized();
 	}
 
