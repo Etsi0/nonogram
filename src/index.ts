@@ -138,7 +138,7 @@ function buildGame(dummy?: boolean) {
 	rowText = Array.from({ length: board.numCells }, () => []);
 
 	gridCells = Array.from({ length: board.numCells ** 2 }, (_, i: number) => {
-		const randomInt = Math.floor(Math.random() * 2);
+		const randomInt = Math.random() > 0.4;
 		const col = i % board.numCells;
 		const row = Math.floor(i / board.numCells);
 

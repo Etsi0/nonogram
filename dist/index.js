@@ -116,7 +116,7 @@ function buildGame(dummy) {
     colText = Array.from({ length: board.numCells }, () => []);
     rowText = Array.from({ length: board.numCells }, () => []);
     gridCells = Array.from({ length: board.numCells ** 2 }, (_, i) => {
-        const randomInt = Math.floor(Math.random() * 2);
+        const randomInt = Math.random() > 0.4;
         const col = i % board.numCells;
         const row = Math.floor(i / board.numCells);
         if ((!randomInt && colText[col][colText[col].length - 1] !== 0) || !colText[col].length) {
