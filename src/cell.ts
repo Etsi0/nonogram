@@ -48,7 +48,7 @@ export class cell {
 			if (mouse.click === 1) {
 				this.hidden = false;
 
-				if (toolBar.current === 'Pen' || toolBar.current === 'Hint') {
+				if (this.state === 'Pen') {
 					variables.total--;
 				}
 
