@@ -3,7 +3,7 @@ import { PercentageToPixels, Preload } from './util.js';
     Settings
 ==================================================*/
 export const board = Object.freeze({
-    lineThickness: 0.5, // How thick the lines should be in percent
+    lineThickness: 0.125, // How thick the lines should be in percent
     numCells: 15, // How many cells it should be per row and column | smallest working size is 3
 });
 export const fontSize = () => PercentageToPixels(16 / Math.ceil(board.numCells / 2));

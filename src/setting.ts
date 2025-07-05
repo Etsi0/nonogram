@@ -40,7 +40,7 @@ type TVariables = {
 	Settings
 ==================================================*/
 export const board: Readonly<TBoard> = Object.freeze({
-	lineThickness: 0.5, // How thick the lines should be in percent
+	lineThickness: 0.125, // How thick the lines should be in percent
 	numCells: 15, // How many cells it should be per row and column | smallest working size is 3
 });
 
