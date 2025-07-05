@@ -19,9 +19,9 @@ export const space = Object.freeze({
         bottom: 0
     },
     workarea: {
-        left: 5,
+        left: 1,
         top: 5,
-        right: 5,
+        right: 1,
         bottom: 5,
         gap: 1
     }
