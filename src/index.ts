@@ -1,8 +1,11 @@
 import { canvas, ctx } from './environment.js';
-import { ResizeCanvas, GetBoardDimensions, executeActionOnCells, PercentageToPixels, isInside, styledText, getColor, Text, GetWorkareaDimensions } from './util.js';
-import { board, variables } from './setting.js';
+import { ResizeCanvas, GetBoardDimensions, executeActionOnCells, PercentageToPixels, isInside, getColor, Text, GetWorkareaDimensions } from './util.js';
+import { board, fontSize, space, variables } from './setting.js';
 import { mouse } from './click.js';
 import { cell } from './cell.js';
+import * as healthBar from './healthBar.js';
+import * as toolBar from './toolBar.js';
+import { Creator } from './generator/creator.js';
 
 addEventListener('load', ResizeCanvas);
 addEventListener('resize', ResizeCanvas);
@@ -16,38 +19,46 @@ export function GameLoop(): void {
 	const workarea = GetWorkareaDimensions();
 	const { height, gridCellSize, width, x, y } = GetBoardDimensions();
 
-	getColor(0.62);
+	healthBar.draw()
+
+	getColor(0.5);
 	ctx.fillRect(x, y, width, height);
-	executeActionOnCells(['draw']);
+	executeActionOnCells('draw');
+
+	toolBar.draw();
 
 	switch (variables.gameState) {
 		case 'Menu':
-			menuScreen('Phadonia Nanogram');
+			menuScreen('Phadonia Nonogram');
 			break;
 		case 'Running':
-			executeActionOnCells(['gotClicked', 'gotHovered']);
+			executeActionOnCells('update');
+			toolBar.update();
 
-			const fontSize = PercentageToPixels(16 / 8);
 			colText.forEach((col, i) => {
 				col.forEach((text, j) => {
-					const txt = new Text(text.toString(), fontSize);
-					txt.x = workarea.x + gridCellSize / 2 + PercentageToPixels(16) + (gridCellSize + PercentageToPixels(board.lineThickness)) * i;
-					txt.y = workarea.y + PercentageToPixels(16) - gridCellSize / 2 - (txt.height + fontSize / 3) * (col.length - 1 - j);
+					const txt = new Text(text.toString(), fontSize());
+					txt.horizontalAlign = 'center'
+					txt.x = x + gridCellSize / 2 + (gridCellSize + PercentageToPixels(board.lineThickness)) * i;
+					txt.y = y - PercentageToPixels(space.workarea.gap) - (txt.height * 1.125) * (col.length - 1 - j);
 					txt.render();
 				});
 			});
 
 			rowText.forEach((row, i) => {
+				let width = row.reduce((accumulator, currentValue) => accumulator + fontSize() / 2 * (currentValue).toString().length + fontSize() / 2, 0);
 				row.forEach((text, j) => {
-					const txt = new Text(text.toString(), fontSize);
-					const centerTextOnLine = txt.height + (gridCellSize - txt.height) / 2;
-					txt.x = workarea.x + PercentageToPixels(16) - gridCellSize / 2 - fontSize / 2 - (fontSize / 2 * text.toString().length + fontSize / 2) * (row.length - 1 - j);
-					txt.y = workarea.y + centerTextOnLine + PercentageToPixels(16) + (gridCellSize + PercentageToPixels(board.lineThickness)) * i;
+					width -= fontSize() / 2 * (text).toString().length + fontSize() / 2;
+					const txt = new Text(text.toString(), fontSize());
+					txt.horizontalAlign = 'right';
+					txt.verticalAlign = 'center';
+					txt.x = x - PercentageToPixels(space.board.left) - width;
+					txt.y = y + gridCellSize / 2 + (gridCellSize + PercentageToPixels(board.lineThickness)) * i;
 					txt.render();
 				});
 			});
 
-			if (variables.health <= 0) {
+			if (healthBar.current <= 0) {
 				variables.gameState = 'Lose';
 			}
 
@@ -97,9 +108,12 @@ function menuScreen(text: string): void {
 	/*==================================================
 		Title Text
 	==================================================*/
-	x = canvas.width * 0.5;
-	y = canvas.height * 0.45;
-	styledText(text, x, y, true);
+	const title = new Text(text, PercentageToPixels(5.4));
+	title.horizontalAlign = 'center';
+	title.verticalAlign = 'center';
+	title.x = canvas.width * 0.5;
+	title.y = canvas.height * 0.45;
+	title.render();
 
 	/*==================================================
 		Start Button
@@ -121,7 +135,12 @@ function menuScreen(text: string): void {
 		}
 	}
 
-	styledText('Start', x + width / 2, y + height / 2, true);
+	const btn = new Text('Start', PercentageToPixels(5.4));
+	btn.horizontalAlign = 'center';
+	btn.verticalAlign = 'center';
+	btn.x = x + width / 2;
+	btn.y = y + height / 2;
+	btn.render();
 }
 
 /*==================================================
@@ -134,44 +153,39 @@ function buildGame(dummy?: boolean) {
 	gridCells = [];
 	variables.total = 0;
 
-	colText = Array.from({ length: board.numCells }, () => []);
-	rowText = Array.from({ length: board.numCells }, () => []);
+	// Create puzzle using the sophisticated generator
+	const creator = new Creator();
+	const puzzle = creator.createRandom(board.numCells, board.numCells);
 
-	gridCells = Array.from({ length: board.numCells ** 2 }, (_, i: number) => {
-		const randomInt = Math.random() > 0.4;
-		const col = i % board.numCells;
-		const row = Math.floor(i / board.numCells);
-
-		if ((!randomInt && colText[col][colText[col].length - 1] !== 0) || !colText[col].length) {
-			colText[col].push(0);
-		}
-
-		if ((!randomInt && rowText[row][rowText[row].length - 1] !== 0) || !rowText[row].length) {
-			rowText[row].push(0);
-		}
-
-		if (randomInt) {
-			variables.total++;
-			colText[col][colText[col].length - 1]++;
-			rowText[row][rowText[row].length - 1]++;
-		}
-
-		return new cell(col, row, randomInt ? 'Pen' : 'Eraser');
-	});
-
-	colText = colText.map((array) => filter(array));
-	rowText = rowText.map((array) => filter(array));
-	function filter(array: number[]): number[] {
-		if (!array[array.length - 1]) {
-			array.pop();
-		}
-
-		return array;
+	if (!puzzle) {
+		console.error('Failed to generate puzzle');
+		return;
 	}
 
+	// Use the generated hints from the puzzle
+	colText = puzzle.columnHints;
+	rowText = puzzle.rowHints;
+
+	// Create grid cells based on the puzzle solution
+	gridCells = puzzle.cells.map((puzzleCell) => {
+		if (puzzleCell.solution === 1) {
+			variables.total++;
+		}
+
+		return new cell(
+			puzzleCell.column,
+			puzzleCell.row,
+			puzzleCell.solution === 1 ? 'Pen' : 'Eraser'
+		);
+	});
+
+	console.log('Generated puzzle:', puzzle);
+	console.log('Creation time:', puzzle.creator?.creationTime, 'seconds');
+	console.log('Solving time:', puzzle.creator?.solvingTime, 'seconds');
+
 	if (!dummy) {
-		variables.health = 3;
-		variables.tool = 'Pen';
+		healthBar.reset();
+		toolBar.reset();
 		variables.gameState = 'Running';
 	}
 }

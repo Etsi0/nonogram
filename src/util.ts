@@ -1,5 +1,5 @@
 import { canvas, ctx } from './environment.js';
-import { board } from './setting.js';
+import { board, size, space } from './setting.js';
 import { mouse } from './click.js';
 import { GameLoop, gridCells } from './index.js';
 
@@ -67,19 +67,22 @@ export function ResizeCanvas(): void {
 	canvas.width = wW * dpr;
 	canvas.height = wH * dpr;
 
-	executeActionOnCells(['gotResized']);
+	executeActionOnCells('resize');
 }
 
-export function GetWorkareaDimensions(): { [x: string]: number } {
-	const smallestSide = Math.min(canvas.width, canvas.height);
-	const biggestPadding = Math.max(board.paddingLeft / 100 + board.paddingRight / 100, board.paddingTop / 100 + board.paddingBottom / 100);
-	const size = smallestSide - smallestSide * biggestPadding;
+export function GetWorkareaDimensions(): { height: number, width: number, x: number, y: number } {
+	let width = Math.min(canvas.width, canvas.height);
+	width = width - width * (space.workarea.left / 100 + space.workarea.right / 100);
 
-	const x = (canvas.width - size) * (board.paddingLeft / (board.paddingLeft + board.paddingRight));
-	const y = (canvas.height - size) * (board.paddingTop / (board.paddingTop + board.paddingBottom));
+	let height = canvas.height;
+	height = height - height * (space.workarea.top / 100 + space.workarea.bottom / 100);
+
+	const x = (canvas.width - width) * (space.workarea.left / (space.workarea.left + space.workarea.right));
+	const y = (canvas.height - height) * (space.workarea.top / (space.workarea.top + space.workarea.bottom));
 
 	return {
-		size,
+		height,
+		width,
 		x,
 		y
 	};
@@ -95,12 +98,15 @@ export function GetWorkareaDimensions(): { [x: string]: number } {
  */
 export function GetBoardDimensions(): { [x: string]: number } {
 	const workarea = GetWorkareaDimensions();
-	const boardSize = workarea.size - PercentageToPixels(16);
+	const boardSize = Math.min(
+		workarea.width - PercentageToPixels(16 + space.board.left),
+		workarea.height - PercentageToPixels(size.healthBar + space.workarea.gap + 21.5 + space.board.top + space.board.bottom + space.workarea.gap + size.toolBar)
+	);
 
 	const gridCellSize = (boardSize - PercentageToPixels(board.lineThickness) * (board.numCells - 1)) / board.numCells;
 
-	const x = workarea.x + PercentageToPixels(16);
-	const y = workarea.y + PercentageToPixels(16);
+	const x = Math.max(workarea.x + PercentageToPixels(16 + space.board.left), workarea.x + (workarea.width - boardSize) / 2);
+	const y = Math.max(workarea.y + PercentageToPixels(size.healthBar + space.workarea.gap + 21.5 + space.board.top), workarea.y + (workarea.height - boardSize) / 2);
 
 	return {
 		height: boardSize,
@@ -124,15 +130,9 @@ export function PercentageToPixels(n: number): number {
 	return Math.min(canvas.width, canvas.height) * (n / 100);
 }
 
-export function executeActionOnCells(actions: ('draw' | 'gotClicked' | 'gotHovered' | 'gotResized')[]): void {
-	if (!gridCells.length) {
-		return;
-	}
-
+export function executeActionOnCells(action: 'draw' | 'update' | 'resize'): void {
 	gridCells.forEach((cell) => {
-		actions.forEach((action) => {
-			cell[action]();
-		});
+		cell[action].call(cell);
 	});
 }
 
@@ -152,39 +152,37 @@ export function getColor(lightness: number): void {
 
 export class Text {
 	private text: string;
-	private verticalAlign: boolean;
 	public height: number;
+	public horizontalAlign: 'left' | 'center' | 'right' = 'left';
+	public verticalAlign: 'top' | 'center' | 'bottom' = 'top';
 	public width: number;
 	public x: number;
 	public y: number;
 
-	constructor(text: string, fontSize: number, verticalAlign?: boolean) {
+	constructor(text: string, fontSize: number) {
 		ctx.font = `${fontSize}px Inter`;
 		ctx.fillStyle = 'white';
-		ctx.textAlign = 'center';
+		ctx.textBaseline = 'ideographic';
 
 		this.text = text;
-		this.verticalAlign = verticalAlign;
 
 		const metrics = ctx.measureText(this.text);
 		this.height = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent + PercentageToPixels(1);
-		this.width = metrics.width;
+		this.width = fontSize / 2 * text.length;
 	}
 
 	render() {
-		ctx.fillText(this.text, this.x, this.y + (this.verticalAlign ? this.height / 2 : 0));
+		ctx.textAlign = this.horizontalAlign;
+
+		switch (this.verticalAlign) {
+			case 'center':
+				this.y += this.height / 2;
+				break;
+			case 'bottom':
+				this.y += this.height;
+				break;
+		}
+
+		ctx.fillText(this.text, this.x, this.y);
 	}
-}
-export function styledText(text: string, x: number, y: number, verticalAlign?: boolean): number {
-	const fontSize = PercentageToPixels(5.4);
-	ctx.font = `${fontSize}px Inter`;
-	ctx.fillStyle = 'white';
-	ctx.textAlign = 'center';
-	if (verticalAlign) {
-		ctx.textBaseline = 'ideographic';
-		y += fontSize / 2;
-	}
-	const width = ctx.measureText(text).width;
-	ctx.fillText(text, x, y);
-	return width;
 }

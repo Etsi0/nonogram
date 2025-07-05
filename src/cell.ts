@@ -2,6 +2,8 @@ import { ctx } from "./environment.js";
 import { GetBoardDimensions, getColor, isInside, PercentageToPixels } from "./util.js";
 import { board, TTool, variables } from "./setting.js";
 import { mouse } from "./click.js";
+import * as healthBar from './healthBar.js';
+import * as toolBar from './toolBar.js';
 
 export class cell {
 	private col: number;
@@ -19,7 +21,7 @@ export class cell {
 		this.row = row;
 		this.state = state;
 		this.hidden = true;
-		this.gotResized();
+		this.resize();
 	}
 
 	draw(): void {
@@ -28,10 +30,10 @@ export class cell {
 		if (!this.hidden) {
 			switch (this.state) {
 				case 'Pen':
-					getColor(0.5);
+					getColor(0.625);
 					break;
 				case 'Eraser':
-					getColor(0.75);
+					getColor(0.375);
 					break;
 			}
 		}
@@ -39,24 +41,22 @@ export class cell {
 		ctx.fillRect(this.x, this.y, this.width, this.height);
 	}
 
-	gotClicked(): void {
-		if (isInside(this.x, this.y, this.width, this.height) && mouse.click === 1) {
-			this.hidden = false;
+	update(): void {
+		if (isInside(this.x, this.y, this.width, this.height)) {
+			document.body.style.cursor = 'pointer';
 
-			if (variables.tool !== this.state) {
+			if (mouse.click === 1) {
+				this.hidden = false;
 				variables.total--;
-				variables.health--;
+
+				if (toolBar.current !== this.state) {
+					healthBar.decrease();
+				}
 			}
 		}
 	}
 
-	gotHovered(): void {
-		if (isInside(this.x, this.y, this.width, this.height)) {
-			document.body.style.cursor = 'pointer';
-		}
-	}
-
-	gotResized(): void {
+	resize(): void {
 		const { gridCellSize, x, y } = GetBoardDimensions();
 
 		this.width = gridCellSize;
