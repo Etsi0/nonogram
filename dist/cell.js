@@ -27,7 +27,7 @@ export class cell {
         ctx.fillRect(this.x, this.y, this.width, this.height);
     }
     update() {
-        if (isInside(this.x, this.y, this.width, this.height)) {
+        if (isInside(this.x, this.y, this.width, this.height) && this.hidden) {
             document.body.style.cursor = 'pointer';
             if (mouse.click === 1) {
                 this.hidden = false;
