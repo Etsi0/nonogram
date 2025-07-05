@@ -31,7 +31,9 @@ export class cell {
             document.body.style.cursor = 'pointer';
             if (mouse.click === 1) {
                 this.hidden = false;
-                variables.total--;
+                if (toolBar.current === 'Pen' || toolBar.current === 'Hint') {
+                    variables.total--;
+                }
                 if (toolBar.current !== this.state) {
                     healthBar.decrease();
                 }
