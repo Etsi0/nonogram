@@ -77,9 +77,9 @@ export function GetWorkareaDimensions() {
  */
 export function GetBoardDimensions() {
     const workarea = GetWorkareaDimensions();
-    const boardSize = Math.min(workarea.width - PercentageToPixels(16 + space.board.left), workarea.height - PercentageToPixels(size.healthBar + space.workarea.gap + 21.5 + space.board.top + space.board.bottom + space.workarea.gap + size.toolBar));
+    const boardSize = Math.min(workarea.width - PercentageToPixels(20 + space.board.left), workarea.height - PercentageToPixels(size.healthBar + space.workarea.gap + 21.5 + space.board.top + space.board.bottom + space.workarea.gap + size.toolBar));
     const gridCellSize = (boardSize - PercentageToPixels(board.lineThickness) * (board.numCells - 1)) / board.numCells;
-    const x = Math.max(workarea.x + PercentageToPixels(16 + space.board.left), workarea.x + (workarea.width - boardSize) / 2);
+    const x = Math.max(workarea.x + PercentageToPixels(20 + space.board.left), workarea.x + (workarea.width - boardSize) / 2);
     const y = Math.max(workarea.y + PercentageToPixels(size.healthBar + space.workarea.gap + 21.5 + space.board.top), workarea.y + (workarea.height - boardSize) / 2);
     return {
         height: boardSize,
