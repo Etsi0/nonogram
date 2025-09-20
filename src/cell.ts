@@ -19,7 +19,7 @@ export class cell {
 	constructor(col: number, row: number, state: TTool = 'Pen') {
 		this.col = col;
 		this.row = row;
-		this.state = "Eraser";
+		this.state = state;
 		this.hidden = true;
 		this.resize();
 	}
