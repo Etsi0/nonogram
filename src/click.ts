@@ -50,7 +50,7 @@ document.addEventListener('touchmove', (event) => {
 	}
 }, { passive: false });
 
-const ENABLE_DEVTOOLS = false;
+const ENABLE_DEVTOOLS = true;
 document.addEventListener('contextmenu', (event) => {
 	if (!ENABLE_DEVTOOLS) {
 		event.preventDefault();
