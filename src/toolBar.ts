@@ -24,7 +24,7 @@ export function draw() {
 	workarea = GetWorkareaDimensions();
 	offset = (workarea.width - PercentageToPixels(size.toolBar) * 2 - PercentageToPixels(size.toolBar / 2) * (2 - 1)) / 2;
 	if (hasSwichedTool) {
-		animation = new Animate(300, 'ease-in-out');
+		animation = new Animate(150, 'ease-in-out');
 	}
 
 	if (animation) {
