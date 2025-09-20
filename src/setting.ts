@@ -71,11 +71,11 @@ export const space: Readonly<TSpacing> = Object.freeze({
 	Image preloader
 ==================================================*/
 // Import assets using Vite's asset handling
-import LogoUrl from '../assets/img/Phadonia.svg?url';
-import HeartFilledUrl from '../assets/img/Heart_filled.svg?url';
-import HeartEmptyUrl from '../assets/img/Heart_empty.svg?url';
-import XUrl from '../assets/img/x.svg?url';
-import PenUrl from '../assets/img/pen.svg?url';
+import LogoUrl from '/assets/img/Phadonia.svg?url';
+import HeartFilledUrl from '/assets/img/Heart_filled.svg?url';
+import HeartEmptyUrl from '/assets/img/Heart_empty.svg?url';
+import XUrl from '/assets/img/x.svg?url';
+import PenUrl from '/assets/img/pen.svg?url';
 
 const imagePaths: Readonly<string[][]> = Object.freeze([
 	['Logo', LogoUrl],

@@ -2,7 +2,7 @@ import { defineConfig } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
-	base: './',
+	base: '/',
 	plugins: [
 		VitePWA({
 			registerType: "autoUpdate",
@@ -13,7 +13,7 @@ export default defineConfig({
 				theme_color: "hsl(240deg 69% 61%)",
 				background_color: "hsl(240deg 16% 95%)",
 				display: "standalone",
-				start_url: "./",
+				start_url: "/",
 				icons: [
 					{
 						src: "assets/img/icon1.ico",
