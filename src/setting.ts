@@ -77,7 +77,7 @@ const imagePaths: Readonly<string[][]> = Object.freeze([
 	['X', 'x.svg'],
 	['Pen', 'pen.svg']
 ]);
-export const images: { [x: string]: HTMLImageElement } = Preload('./assets/img/', imagePaths);
+export const images: { [x: string]: HTMLImageElement } = Preload('../assets/img/', imagePaths);
 
 /*==================================================
 	Variables the game need to run
