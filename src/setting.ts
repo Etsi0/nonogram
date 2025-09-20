@@ -1,4 +1,4 @@
-import { GetBoardDimensions, PercentageToPixels, Preload } from './util.js';
+import { PercentageToPixels, Preload } from './util';
 
 /*==================================================
 	Types

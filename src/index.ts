@@ -1,11 +1,11 @@
-import { canvas, ctx } from './environment.js';
-import { ResizeCanvas, GetBoardDimensions, executeActionOnCells, PercentageToPixels, isInside, getColor, Text, GetWorkareaDimensions } from './util.js';
-import { board, fontSize, space, variables } from './setting.js';
-import { mouse } from './click.js';
-import { cell } from './cell.js';
-import * as healthBar from './healthBar.js';
-import * as toolBar from './toolBar.js';
-import { Creator } from './generator/creator.js';
+import { canvas, ctx } from './environment';
+import { ResizeCanvas, GetBoardDimensions, executeActionOnCells, PercentageToPixels, isInside, getColor, Text, Animate, type TODO } from './util';
+import { board, fontSize, space, variables } from './setting';
+import { mouse } from './click';
+import { cell } from './cell';
+import * as healthBar from './healthBar';
+import * as toolBar from './toolBar';
+import { Creator } from './generator/creator';
 
 addEventListener('load', ResizeCanvas);
 addEventListener('resize', ResizeCanvas);
@@ -13,10 +13,10 @@ addEventListener('resize', ResizeCanvas);
 /*==================================================
 	GameLoop
 ==================================================*/
+let animation: TODO;
 export function GameLoop(): void {
 	clear();
 
-	const workarea = GetWorkareaDimensions();
 	const { height, gridCellSize, width, x, y } = GetBoardDimensions();
 
 	healthBar.draw()
@@ -32,8 +32,21 @@ export function GameLoop(): void {
 			menuScreen('Phadonia Nonogram');
 			break;
 		case 'Running':
+			const health = healthBar.current;
 			executeActionOnCells('update');
 			toolBar.update();
+			if (health !== healthBar.current) {
+				animation = new Animate(500, 'bell');
+			}
+			if (animation) {
+				const opacity = animation.step();
+				ctx.fillStyle = `oklch(0.6364 0.1717 23.32 / ${opacity})`;
+				ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+				if (animation.isComplete()) {
+					animation = undefined;
+				}
+			}
 
 			colText.forEach((col, i) => {
 				col.forEach((text, j) => {
@@ -47,7 +60,7 @@ export function GameLoop(): void {
 
 			rowText.forEach((row, i) => {
 				let width = row.reduce((accumulator, currentValue) => accumulator + fontSize() / 2 * (currentValue).toString().length + fontSize() / 2, 0);
-				row.forEach((text, j) => {
+				row.forEach((text) => {
 					width -= fontSize() / 2 * (text).toString().length + fontSize() / 2;
 					const txt = new Text(text.toString(), fontSize());
 					txt.horizontalAlign = 'right';
@@ -94,6 +107,8 @@ function clear(): void {
 	Start/Win/Lose Screen
 ==================================================*/
 function menuScreen(text: string): void {
+	animation = undefined;
+
 	let width: number = 0;
 	let height: number = 0;
 	let x: number = 0;

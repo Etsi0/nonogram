@@ -1,4 +1,4 @@
-import { canvas } from './environment.js';
+import { canvas } from './environment';
 
 //! Only change this array when the mouse moves or clicks
 //! Disable click at the end of the GameLoop so the click gets only triggered on one frame

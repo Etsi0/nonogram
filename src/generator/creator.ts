@@ -1,7 +1,7 @@
-import { Puzzle } from './puzzle.js';
-import { PuzzleCell } from './puzzle-cell.js';
-import { Solver } from './solver.js';
-import { Utility } from './utility.js';
+import { Puzzle } from './puzzle';
+import { PuzzleCell } from './puzzle-cell';
+import { Solver } from './solver';
+import { Utility } from './utility';
 
 export { Creator };
 

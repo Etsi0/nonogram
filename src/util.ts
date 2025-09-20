@@ -1,8 +1,10 @@
-import { canvas, ctx } from './environment.js';
-import { board, size, space } from './setting.js';
-import { mouse } from './click.js';
-import { GameLoop, gridCells } from './index.js';
+import bezier from 'bezier-easing';
+import { canvas, ctx } from './environment';
+import { board, size, space } from './setting';
+import { mouse } from './click';
+import { GameLoop, gridCells } from './index';
 
+export type TODO = any;
 type TImageObj = {
 	[x: string]: HTMLImageElement;
 };
@@ -156,8 +158,8 @@ export class Text {
 	public horizontalAlign: 'left' | 'center' | 'right' = 'left';
 	public verticalAlign: 'top' | 'center' | 'bottom' = 'top';
 	public width: number;
-	public x: number;
-	public y: number;
+	public x: number = 0;
+	public y: number = 0;
 
 	constructor(text: string, fontSize: number) {
 		ctx.font = `${fontSize}px Inter`;
@@ -184,5 +186,89 @@ export class Text {
 		}
 
 		ctx.fillText(this.text, this.x, this.y);
+	}
+}
+
+function clamp(min: number, current: number, max: number) {
+	return Math.max(min, Math.min(current, max));
+}
+
+type TBezier = [number, number, number, number]
+type TAnimArgs = {
+	linear: [];
+	'ease': [];
+	'ease-in': [];
+	'ease-out': [];
+	'ease-in-out': [];
+	bezier: [TBezier];
+	sin: [];
+	bell: [];
+};
+
+export class Animate<T extends keyof TAnimArgs> {
+	private startTime: number;
+	private duration: number;
+	private animationType: keyof TAnimArgs = 'linear';
+	private bezier: bezier.EasingFunction = bezier(0, 0, 1, 1);
+
+	constructor(duration: number, animationType: T, ...args: TAnimArgs[T]) {
+		this.startTime = Date.now();
+		this.duration = duration;
+
+		switch (animationType) {
+			case 'linear':
+				this.animationType = 'bezier';
+				this.bezier = bezier(0, 0, 1, 1);
+				break;
+			case 'ease':
+				this.animationType = 'bezier';
+				this.bezier = bezier(0.25, 0, 0.25, 1);
+				break;
+			case 'ease-in':
+				this.animationType = 'bezier';
+				this.bezier = bezier(0.42, 0, 1, 1);
+				break;
+			case 'ease-out':
+				this.animationType = 'bezier';
+				this.bezier = bezier(0, 0, 0.58, 1);
+				break;
+			case 'ease-in-out':
+				this.animationType = 'bezier';
+				this.bezier = bezier(0.42, 0, 0.58, 1);
+				break;
+			case 'bezier':
+				this.bezier = bezier(...args[0] as TBezier);
+				break;
+			default:
+				this.animationType = animationType;
+				break;
+		}
+	}
+
+	step(): number {
+		const currentTime = Date.now();
+		const elapsed = currentTime - this.startTime;
+		const progress = clamp(0, elapsed / this.duration, 1);
+		switch (this.animationType) {
+			case 'bezier':
+				const result = this.bezier(progress);
+				return result;
+			case 'sin':
+				return 0.5 * Math.sin(progress * Math.PI);
+			case 'bell':
+				// Normal distribution curve (bell curve)
+				const sigma = 0.25;
+				const mu = 0.5;
+				const coefficient = 1 / (sigma * Math.sqrt(2 * Math.PI));
+				const exponent = -0.5 * Math.pow((progress - mu) / sigma, 2);
+				return coefficient * Math.exp(exponent) * sigma * Math.sqrt(2 * Math.PI) * 0.5;
+			default:
+				return progress;
+		}
+
+	}
+
+	isComplete(): boolean {
+		return Date.now() - this.startTime >= this.duration;
 	}
 }

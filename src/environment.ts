@@ -1,2 +1,2 @@
 export const canvas = document.getElementById('myCanvas') as HTMLCanvasElement;
-export const ctx = canvas.getContext('2d');
+export const ctx = canvas.getContext('2d') as CanvasRenderingContext2D ;

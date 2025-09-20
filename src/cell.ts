@@ -1,17 +1,17 @@
-import { ctx } from "./environment.js";
-import { GetBoardDimensions, getColor, isInside, PercentageToPixels } from "./util.js";
-import { board, TTool, variables } from "./setting.js";
-import { mouse } from "./click.js";
-import * as healthBar from './healthBar.js';
-import * as toolBar from './toolBar.js';
+import { ctx } from "./environment";
+import { GetBoardDimensions, getColor, isInside, PercentageToPixels } from "./util";
+import { board, TTool, variables } from "./setting";
+import { mouse } from "./click";
+import * as healthBar from './healthBar';
+import * as toolBar from './toolBar';
 
 export class cell {
 	private col: number;
 	private row: number;
-	private x: number;
-	private y: number;
-	private width: number;
-	private height: number;
+	private x: number = 0;
+	private y: number = 0;
+	private width: number = 0;
+	private height: number = 0;
 
 	private hidden: boolean;
 	private state: TTool;
@@ -19,7 +19,7 @@ export class cell {
 	constructor(col: number, row: number, state: TTool = 'Pen') {
 		this.col = col;
 		this.row = row;
-		this.state = state;
+		this.state = "Eraser";
 		this.hidden = true;
 		this.resize();
 	}

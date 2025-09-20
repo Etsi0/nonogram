@@ -1,6 +1,6 @@
-import { ctx } from "./environment.js";
-import { images, size } from "./setting.js";
-import { GetWorkareaDimensions, PercentageToPixels } from "./util.js";
+import { ctx } from "./environment";
+import { images, size } from "./setting";
+import { GetWorkareaDimensions, PercentageToPixels } from "./util";
 
 const MAX_HEALTH = 3;
 export let current: number;
