@@ -70,14 +70,22 @@ export const space: Readonly<TSpacing> = Object.freeze({
 /*==================================================
 	Image preloader
 ==================================================*/
+// Import assets using Vite's asset handling
+import LogoUrl from '../assets/img/Phadonia.svg?url';
+import HeartFilledUrl from '../assets/img/Heart_filled.svg?url';
+import HeartEmptyUrl from '../assets/img/Heart_empty.svg?url';
+import XUrl from '../assets/img/x.svg?url';
+import PenUrl from '../assets/img/pen.svg?url';
+
 const imagePaths: Readonly<string[][]> = Object.freeze([
-	['Logo', 'Phadonia.svg'],
-	['Heart_filled', 'Heart_filled.svg'],
-	['Heart_empty', 'Heart_empty.svg'],
-	['X', 'x.svg'],
-	['Pen', 'pen.svg']
+	['Logo', LogoUrl],
+	['Heart_filled', HeartFilledUrl],
+	['Heart_empty', HeartEmptyUrl],
+	['X', XUrl],
+	['Pen', PenUrl]
 ]);
-export const images: { [x: string]: HTMLImageElement } = Preload('../assets/img/', imagePaths);
+
+export const images: { [x: string]: HTMLImageElement } = Preload('', imagePaths);
 
 /*==================================================
 	Variables the game need to run
